@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:flutter_url_shortener/config/routes.dart';
 import 'package:flutter_url_shortener/controllers/bottom_sheet_controller.dart';
 import 'package:flutter_url_shortener/models/link_model.dart';
 import 'package:flutter_url_shortener/utils/extensions.dart';
@@ -230,9 +231,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                 width: 136,
                                 height: 48,
                                 child: ElevatedButton(
-                                  onPressed: () async {
-                                    print("pastedText $pastedText");
-                                  },
+                                  onPressed: () => Navigator.pushNamed(
+                                    context,
+                                    Routes.webview,
+                                    arguments: {
+                                      "pastedText": pastedText,
+                                    },
+                                  ),
                                   style: ElevatedButton.styleFrom(
                                     elevation: 0,
                                     backgroundColor: const Color(0xFFB03BA6),
