@@ -1,11 +1,10 @@
-import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:flutter_url_shortener/controllers/bottom_sheet_controller.dart';
 import 'package:flutter_url_shortener/models/link_model.dart';
-import 'package:flutter_url_shortener/repository/create_link_repository.dart';
 import 'package:flutter_url_shortener/utils/extensions.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:flutter_url_shortener/widgets/copy_link_widget.dart';
+import 'package:flutter_url_shortener/widgets/customized_text_widget.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -23,6 +22,12 @@ class _HomeScreenState extends State<HomeScreen> {
   String pastedText = '';
   @override
   Widget build(BuildContext context) {
+    Future<dynamic> launchUrl(url) async {
+      if (!await launchUrl(url)) {
+        throw Exception('Could not launch URL');
+      }
+    }
+
     return Scaffold(
       body: Container(
         child: SingleChildScrollView(
@@ -150,7 +155,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   setState(() {
                     controllerCustomize = customize;
                   });
-                  link = CreateLinkRepository.createShortLink(pastedText);
+                  // ! TODO remove comment:
+                  // link = CreateLinkRepository.createShortLink(pastedText);
                 },
                 decoration: const InputDecoration(
                   labelText: 'any name nah name',
@@ -185,90 +191,219 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(
                 height: 130,
               ),
-              FutureBuilder<Link>(
-                future: link,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return Column(
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              isTapped = !isTapped;
-                            });
-                          },
-                          child: Center(
-                            child: Text(
-                              isTapped == true
-                                  ? controllerCustomize
-                                  : "Short-URL",
-                              style: TextStyle(
-                                decoration: TextDecoration.underline,
-                                color: Color(0xFF0F1242),
-                                fontSize: 20,
-                                fontFamily: 'poppins_semi_bold',
-                              ),
+              Column(
+                children: [
+                  GestureDetector(
+                    onTap: () => BottomSheetController.showSheet(
+                      context,
+                      Column(
+                        children: [
+                          const Text(
+                            "You just clicked on the link ohh",
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontFamily: 'poppins_semi_bold',
                             ),
                           ),
-                        ),
-                        SizedBox(
-                          height: 56,
-                        ),
-                        ElevatedButton(
-                          onPressed: () {
-                            FlutterClipboard.copy(snapshot.data!.link);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            elevation: 0,
-                            backgroundColor: const Color(0xFFF5E0F3),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(2),
-                            ),
+                          const SizedBox(
+                            height: 8,
                           ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text("Copy Link"),
-                              SvgPicture.asset("assets/icons/copyIcon.svg"),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 16,
-                        ),
-                        const Text(
-                          "sharp sharp things 🥺",
-                          style: TextStyle(
-                            color: Color(0xFF47496B),
+                          CustomizedTextWidget(
+                            controllerCustomize: controllerCustomize,
                             fontSize: 16,
                             fontFamily: 'poppins_regular',
                           ),
-                        )
-                      ],
-                    );
-                  } else if (snapshot.hasError) {
-                    return const Text("has error");
-                  }
-                  return Column(
-                    children: [
-                      Center(
-                        child: SvgPicture.asset(
-                          "assets/icons/loading.svg",
-                        ),
+                          const SizedBox(
+                            height: 72,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Container(
+                                width: 136,
+                                height: 48,
+                                child: CopyLinkWidget(
+                                  link: "link",
+                                ),
+                              ),
+                              Container(
+                                width: 136,
+                                height: 48,
+                                child: ElevatedButton(
+                                  onPressed: () async {
+                                    print("pastedText $pastedText");
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    elevation: 0,
+                                    backgroundColor: const Color(0xFFB03BA6),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(2),
+                                    ),
+                                  ),
+                                  child: const Text(
+                                    "Open Page",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        ],
                       ),
-                      const Text(
-                        "i dey come make i run am",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontFamily: 'poppins_regular',
-                          color: Color(0xFF47496B),
-                        ),
+                    ),
+                    child: Center(
+                      child: CustomizedTextWidget(
+                        controllerCustomize: controllerCustomize,
+                        fontSize: 20,
+                        fontFamily: 'poppins_semi_bold',
                       ),
-                    ],
-                  );
-                },
-              ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 56,
+                  ),
+                  CopyLinkWidget(
+                    link: "link",
+                  ),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  const Text(
+                    "sharp sharp things 🥺",
+                    style: TextStyle(
+                      color: Color(0xFF47496B),
+                      fontSize: 16,
+                      fontFamily: 'poppins_regular',
+                    ),
+                  )
+                ],
+              )
+              // FutureBuilder<Link>(
+              //   future: link,
+              //   builder: (context, snapshot) {
+              //     if (snapshot.hasData) {
+              //       var link = snapshot.data!.link;
+              //       return Column(
+              //         children: [
+              //           GestureDetector(
+              //             onTap: () => BottomSheetController.showSheet(
+              //               context,
+              //               Column(
+              //                 children: [
+              //                   const Text(
+              //                     "You just clicked on the link ohh",
+              //                     style: TextStyle(
+              //                       fontSize: 20,
+              //                       fontFamily: 'poppins_semi_bold',
+              //                     ),
+              //                   ),
+              //                   const SizedBox(
+              //                     height: 8,
+              //                   ),
+              //                   CustomizedTextWidget(
+              //                     controllerCustomize: controllerCustomize,
+              //                     fontSize: 16,
+              //                     fontFamily: 'poppins_regular',
+              //                   ),
+              //                   const SizedBox(
+              //                     height: 72,
+              //                   ),
+              //                   Row(
+              //                     mainAxisAlignment:
+              //                         MainAxisAlignment.spaceEvenly,
+              //                     children: [
+              //                       Container(
+              //                         width: 136,
+              //                         height: 48,
+              //                         child: CopyLinkWidget(
+              //                           link: link,
+              //                         ),
+              //                       ),
+              //                       Container(
+              //                         width: 136,
+              //                         height: 48,
+              //                         child: ElevatedButton(
+              //                           onPressed: () async {
+              //                             if (await canLaunchUrl(
+              //                                 Uri.parse(pastedText))) {
+              //                               await launchUrl(
+              //                                 pastedText,
+              //                               );
+              //                             }
+              //                           },
+              //                           style: ElevatedButton.styleFrom(
+              //                             elevation: 0,
+              //                             backgroundColor:
+              //                                 const Color(0xFFB03BA6),
+              //                             shape: RoundedRectangleBorder(
+              //                               borderRadius:
+              //                                   BorderRadius.circular(2),
+              //                             ),
+              //                           ),
+              //                           child: const Text(
+              //                             "Open Page",
+              //                             style: TextStyle(
+              //                               color: Colors.white,
+              //                             ),
+              //                           ),
+              //                         ),
+              //                       )
+              //                     ],
+              //                   ),
+              //                 ],
+              //               ),
+              //             ),
+              //             child: Center(
+              //               child: CustomizedTextWidget(
+              //                 controllerCustomize: controllerCustomize,
+              //                 fontSize: 20,
+              //                 fontFamily: 'poppins_semi_bold',
+              //               ),
+              //             ),
+              //           ),
+              //           const SizedBox(
+              //             height: 56,
+              //           ),
+              //           CopyLinkWidget(
+              //             link: link,
+              //           ),
+              //           const SizedBox(
+              //             height: 16,
+              //           ),
+              //           const Text(
+              //             "sharp sharp things 🥺",
+              //             style: TextStyle(
+              //               color: Color(0xFF47496B),
+              //               fontSize: 16,
+              //               fontFamily: 'poppins_regular',
+              //             ),
+              //           )
+              //         ],
+              //       );
+              //     } else if (snapshot.hasError) {
+              //       return const Text("has error");
+              //     }
+              //     return Column(
+              //       children: [
+              //         Center(
+              //           child: SvgPicture.asset(
+              //             "assets/icons/loading.svg",
+              //           ),
+              //         ),
+              //         const Text(
+              //           "i dey come make i run am",
+              //           style: TextStyle(
+              //             fontSize: 18,
+              //             fontFamily: 'poppins_regular',
+              //             color: Color(0xFF47496B),
+              //           ),
+              //         ),
+              //       ],
+              //     );
+              //   },
+              // ),
             ],
           ),
         ),
