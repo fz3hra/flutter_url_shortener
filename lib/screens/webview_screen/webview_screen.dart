@@ -32,22 +32,24 @@ class _WebViewScreenState extends State<WebViewScreen> {
         children: [
           WebViewWidget(
             controller: controller
-              ..setNavigationDelegate(
-                NavigationDelegate(
-                    onPageStarted: (url) => setState(() {
-                          loadingPercentage = 0;
-                        }),
-                    onProgress: (progress) {
-                      setState(() {
-                        loadingPercentage = progress;
-                      });
-                    },
-                    onPageFinished: (url) {
-                      setState(() {
-                        loadingPercentage = 100;
-                      });
-                    }),
-              )
+              // ..setNavigationDelegate(
+              //   NavigationDelegate(
+              //       onPageStarted: (url) => setState(() {
+              //             loadingPercentage = 0;
+              //           }),
+              //       onProgress: (progress) {
+              //         Future.delayed(Duration.zero, () async {
+              //           setState(() {
+              //             loadingPercentage = progress;
+              //           });
+              //         });
+              //       },
+              //       onPageFinished: (url) {
+              //         setState(() {
+              //           loadingPercentage = 100;
+              //         });
+              //       }),
+              // )
               ..loadRequest(
                 Uri.parse(pastedText),
               ),
