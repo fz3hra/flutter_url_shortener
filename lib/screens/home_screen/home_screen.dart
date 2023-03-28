@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_url_shortener/config/routes.dart';
 import 'package:flutter_url_shortener/controllers/bottom_sheet_controller.dart';
+import 'package:flutter_url_shortener/models/create_history_modal.dart';
 import 'package:flutter_url_shortener/models/link_model.dart';
 import 'package:flutter_url_shortener/repository/create_link_repository.dart';
+import 'package:flutter_url_shortener/services/database_connection_service.dart';
 import 'package:flutter_url_shortener/utils/extensions.dart';
 import 'package:flutter_url_shortener/widgets/copy_link_widget.dart';
 import 'package:flutter_url_shortener/widgets/customized_text_widget.dart';
@@ -24,6 +26,26 @@ class _HomeScreenState extends State<HomeScreen> {
   TextEditingController pasteController = TextEditingController();
   TextEditingController customizedController = TextEditingController();
   String pastedText = '';
+
+  late DatabaseConnectionService _databaseConnectionService;
+
+  @override
+  void initState() {
+    super.initState();
+    _databaseConnectionService = DatabaseConnectionService();
+    _databaseConnectionService.initialiseDatabase();
+  }
+
+  void insert(id, longLink, shortLink) async {
+    final row = {
+      _databaseConnectionService.createItem(
+        CreateHistoryModal(
+            id: id, longLink: longLink, shortLink: shortLink.text),
+      ),
+    };
+    debugPrint("row $row");
+  }
+
   @override
   Widget build(BuildContext context) {
     Future<dynamic> launchUrl(url) async {
@@ -42,7 +64,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () => Navigator.pushNamed(
+                      context,
+                      Routes.history,
+                    ),
                     style: ElevatedButton.styleFrom(
                       elevation: 0,
                       backgroundColor: const Color(0xFFF5E0F3),
@@ -166,7 +191,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     controllerCustomize = customize;
                   });
                   // ! TODO remove comment:
-                  link = CreateLinkRepository.createShortLink(pastedText);
+                  // link = CreateLinkRepository.createShortLink(pastedText);
+                  insert(2, pastedText, customizedController);
                 },
                 decoration: const InputDecoration(
                   labelText: 'any name nah name',
