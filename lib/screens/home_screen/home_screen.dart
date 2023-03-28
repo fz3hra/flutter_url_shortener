@@ -41,7 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
       _databaseConnectionService.createItem(
         CreateHistoryModal(
           id: id,
-          linkName: linkName,
+          shortLink: linkName,
           longLink: longLink,
           // shortLink: shortLink,
         ),

@@ -91,6 +91,10 @@ class _HistoryScreenState extends State<HistoryScreen> {
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.transparent,
+                                  elevation: 0,
+                                ),
                                 onPressed: () {
                                   FlutterClipboard.copy(item.longLink);
                                 },
@@ -142,6 +146,10 @@ class _HistoryScreenState extends State<HistoryScreen> {
                               ),
                               // ! Add logic
                               ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.transparent,
+                                  elevation: 0,
+                                ),
                                 onPressed: () {
                                   // FlutterClipboard.copy(item.shortLink);
                                 },
