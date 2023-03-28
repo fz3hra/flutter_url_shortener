@@ -36,11 +36,15 @@ class _HomeScreenState extends State<HomeScreen> {
     _databaseConnectionService.initialiseDatabase();
   }
 
-  void insert(id, longLink, shortLink) async {
+  void insert(id, linkName, longLink) async {
     final row = {
       _databaseConnectionService.createItem(
         CreateHistoryModal(
-            id: id, longLink: longLink, shortLink: shortLink.text),
+          id: id,
+          linkName: linkName,
+          longLink: longLink,
+          // shortLink: shortLink,
+        ),
       ),
     };
     debugPrint("row $row");
@@ -191,8 +195,14 @@ class _HomeScreenState extends State<HomeScreen> {
                     controllerCustomize = customize;
                   });
                   // ! TODO remove comment:
-                  // link = CreateLinkRepository.createShortLink(pastedText);
-                  insert(2, pastedText, customizedController);
+                  link = CreateLinkRepository.createShortLink(pastedText);
+                  // insert(2, controllerCustomize, pastedText, link);
+// TODO: add link
+                  insert(
+                    2,
+                    controllerCustomize,
+                    pastedText,
+                  );
                 },
                 decoration: const InputDecoration(
                   labelText: 'any name nah name',

@@ -15,7 +15,7 @@ class DatabaseConnectionService {
 
   Future<void> createDatabase(Database database, int value) async {
     await database.execute(
-      "CREATE TABLE url (id INTEGER PRIMARY KEY AUTOINCREMENT, longLink TEXT, shortLink TEXT)",
+      "CREATE TABLE url (id INTEGER PRIMARY KEY AUTOINCREMENT, linkName TEXT, longLink TEXT, shortLink TEXT)",
     );
   }
 
